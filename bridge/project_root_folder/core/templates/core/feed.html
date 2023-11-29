@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div>
+    <h2>Recent Posts</h2>
+    {% for post in recent_posts %}
+      <div class="post">
+        <p>{{ post.user.username }} - {{ post.caption }}</p>
+        <img src="{{ post.image.url }}" alt="Post Image">
+        
+        <!-- Display likes -->
+        <p>Likes: {{ post.likes.count }}</p>
+
+        <!-- Display comments -->
+        <div>
+          <h4>Comments:</h4>
+          {% for comment in post.comment_set.all %}
+            <p>{{ comment.user.username }}: {{ comment.content }}</p>
+          {% endfor %}
+        </div>
+
+        <!-- Add a form for new comments -->
+        <form method="post" action="{% url 'comment' %}">
+          {% csrf_token %}
+          <input type="hidden" name="post_id" value="{{ post.id }}">
+          <textarea name="content" placeholder="Add a comment"></textarea>
+          <button type="submit">Comment</button>
+        </form>
+
+        <!-- Add a form for liking the post -->
+        <form method="post" action="{% url 'like' %}">
+          {% csrf_token %}
+          <input type="hidden" name="post_id" value="{{ post.id }}">
+          <button type="submit">Like</button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}
